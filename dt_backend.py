@@ -64,10 +64,9 @@ from backend.api.rest_endpoints import db_import_export_endpoints
 from backend.api.rest_endpoints import aas_endpoints
 
 # noinspection PyUnresolvedReferences
-from backend.api.rest_endpoints import similarity_pipeline_endpoints
+#vfrom backend.api.rest_endpoints import similarity_pipeline_endpoints
 
 from init_learning_factory_from_cypher_file import (
-    generate_alternative_cad_format,
     import_binary_data,
     setup_knowledge_graph,
 )
@@ -92,11 +91,11 @@ def init_database_data_if_not_available():
         logger.info(
             "No assets found! Initializing databases in 60 seconds, if not canceled."
         )
-        time.sleep(60)
+        time.sleep(10)
 
         setup_knowledge_graph()
         import_binary_data()
-        generate_alternative_cad_format()
+        # generate_alternative_cad_format()
         logger.info("Finished initilization.")
 
 
@@ -112,7 +111,6 @@ def refresh_workers():
 
 
 def refresh_workers_thread_loop():
-
     while True:
         time.sleep(120)
         logger.info("Refreshing worker services...")
@@ -128,7 +126,6 @@ def refresh_workers_thread_loop():
 
 
 if __name__ == "__main__":
-
     logger.info("Initializing Knowledge Graph...")
 
     # pylint: disable=W0612
@@ -145,24 +142,24 @@ if __name__ == "__main__":
     )
     logger.info("Done initializing specialized databases.")
 
-    logger.info(
-        "Loading worker services: time-series inputs and connections as well as annotation detectors..."
-    )
-    refresh_workers()
-    logger.info("Done loading worker services.")
+    # logger.info(
+    #     "Loading worker services: time-series inputs and connections as well as annotation detectors..."
+    # )
+    # refresh_workers()
+    # logger.info("Done loading worker services.")
 
     # Thread checking regulary, if timeseries inputs, runtime-connections and annotation detectors have been added / removed
-    workers_refresh_thread = Thread(target=refresh_workers_thread_loop)
-    workers_refresh_thread.start()
+    # workers_refresh_thread = Thread(target=refresh_workers_thread_loop)
+    # workers_refresh_thread.start()
 
     # Start cleanup thread deleting obsolete backups:
     start_storage_cleanup_thread()
 
     # Start getting the connectivity status for runtime connections
-    RuntimeConnectionContainer.instance().start_active_connections_status_thread()
+    # RuntimeConnectionContainer.instance().start_active_connections_status_thread()
     # Start getting the connectivity status for runtime connections
 
-    AnnotationDetectorContainer.instance().start_active_detectors_status_thread()
+    # AnnotationDetectorContainer.instance().start_active_detectors_status_thread()
 
     # Run fast API
     # noinspection PyTypeChecker

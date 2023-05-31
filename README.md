@@ -93,3 +93,8 @@ You can find the source code of the old version under [Release v1.0.0](https://g
 ---
 
 This package is provided without any warranty.
+
+# Launch command from Dev Container
+```dotenv -f environment_and_configuration/devcontainer_environment_backend.env run python dt_backend.py```
+
+```dotenv -f environment_and_configuration/devcontainer_environment_frontend.env run gunicorn dt_frontend:server -b :8050 --timeout 1800 --workers 4```

@@ -1,10 +1,13 @@
 {
-    "python.formatting.provider": "black",
+    "python.formatting.provider": "none",
     "python.formatting.blackPath": "black",
     "editor.formatOnSave": true,
     "python.analysis.diagnosticMode": "workspace",
     "python.linting.pylintEnabled": true,
     "python.linting.pylintArgs": [
         "--rcfile=.pylintrc"
-    ]
+    ],
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    }
 }

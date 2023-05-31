@@ -10,8 +10,8 @@ from stl import mesh  # pip install numpy-stl
 import plotly.graph_objects as go
 import numpy as np
 
-import cadquery
-import cqkit
+# import cadquery
+# import cqkit
 
 # import OCC
 # from OCC.STEPControl import STEPControl_Reader
@@ -32,8 +32,7 @@ from frontend.right_sidebar.node_data_tab.timeseries_graph import (
 )
 from frontend.right_sidebar.node_data_tab.file_visualization.visualizer_implementations import (
     pdf_visualizer,
-    jpg_visualizer,
-    cad_visualizer,
+    jpg_visualizer
 )
 from graph_domain.main_digital_twin.SupplementaryFileNode import (
     SupplementaryFileNodeFlat,
@@ -160,11 +159,11 @@ def visualize_file(_, selected_el_json):
     if suppl_file_details.file_type == SupplementaryFileTypes.IMAGE_JPG.value:
         return jpg_visualizer.get_visualization(selected_el)
 
-    elif suppl_file_details.file_type == SupplementaryFileTypes.CAD_STEP.value:
-        return cad_visualizer.get_visualization(selected_el, False)
+    # elif suppl_file_details.file_type == SupplementaryFileTypes.CAD_STEP.value:
+    #     return cad_visualizer.get_visualization(selected_el, False)
 
-    elif suppl_file_details.file_type == SupplementaryFileTypes.CAD_STL.value:
-        return cad_visualizer.get_visualization(selected_el, True)
+    # elif suppl_file_details.file_type == SupplementaryFileTypes.CAD_STL.value:
+    #     return cad_visualizer.get_visualization(selected_el, True)
 
     elif suppl_file_details.file_type == SupplementaryFileTypes.DOCUMENT_PDF.value:
         return pdf_visualizer.get_visualization(selected_el)

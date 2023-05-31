@@ -14,8 +14,8 @@ from graph_domain.expert_annotations.AnnotationPreIndicatorNode import (
 from util.environment_and_configuration import get_environment_variable
 import boto3
 from botocore.client import Config
-import cadquery
-import cqkit
+# import cadquery
+# import cqkit
 from util.log import logger
 
 LEARNING_FACTORY_CYPHER_FILE = "learning_factory_instance/learning_factory.cypher"
@@ -125,112 +125,112 @@ def import_binary_data():
     # s3.Bucket("songs").download_file("piano.mp3", "/tmp/classical.mp3")
 
 
-def generate_alternative_cad_format():
+# def generate_alternative_cad_format():
 
-    s3_client = boto3.client(
-        "s3",
-        endpoint_url=S3_URI,
-        aws_access_key_id=S3_USER,
-        aws_secret_access_key=S3_PASSWORD,
-        config=Config(signature_version="s3v4"),
-        # region_name="eu-north-1",  # ignore region functionality
-    )
+#     s3_client = boto3.client(
+#         "s3",
+#         endpoint_url=S3_URI,
+#         aws_access_key_id=S3_USER,
+#         aws_secret_access_key=S3_PASSWORD,
+#         config=Config(signature_version="s3v4"),
+#         # region_name="eu-north-1",  # ignore region functionality
+#     )
 
-    s3_resource = boto3.resource(
-        "s3",
-        endpoint_url=S3_URI,
-        aws_access_key_id=S3_USER,
-        aws_secret_access_key=S3_PASSWORD,
-        config=Config(signature_version="s3v4"),
-        # region_name="eu-north-1",  # ignore region functionality
-    )
+#     s3_resource = boto3.resource(
+#         "s3",
+#         endpoint_url=S3_URI,
+#         aws_access_key_id=S3_USER,
+#         aws_secret_access_key=S3_PASSWORD,
+#         config=Config(signature_version="s3v4"),
+#         # region_name="eu-north-1",  # ignore region functionality
+#     )
 
-    bucket = s3_resource.Bucket(S3_BUCKET_NAME)
+#     bucket = s3_resource.Bucket(S3_BUCKET_NAME)
 
-    g = _get_neo4j_graph()
+#     g = _get_neo4j_graph()
 
-    step_cad_file_list = g.run(
-        'MATCH (f:SUPPLEMENTARY_FILE {type: "CAD_STEP"}) WHERE NOT (f)-[:SECONDARY_FORMAT]-(:SUPPLEMENTARY_FILE {type: "CAD_STL"}) RETURN f.file_name, f.iri, f.id_short, f.description'
-    ).data()
+#     step_cad_file_list = g.run(
+#         'MATCH (f:SUPPLEMENTARY_FILE {type: "CAD_STEP"}) WHERE NOT (f)-[:SECONDARY_FORMAT]-(:SUPPLEMENTARY_FILE {type: "CAD_STL"}) RETURN f.file_name, f.iri, f.id_short, f.description'
+#     ).data()
 
-    logger.info(
-        f"Generating STL-files as alternative for STEP files. Total: {len(step_cad_file_list)}"
-    )
-    tx = g.begin()
-    i = 1
-    for file in step_cad_file_list:
-        logger.info(
-            f"Converting {file['f.file_name']} ({i}/{len(step_cad_file_list)})..."
-        )
+#     logger.info(
+#         f"Generating STL-files as alternative for STEP files. Total: {len(step_cad_file_list)}"
+#     )
+#     tx = g.begin()
+#     i = 1
+#     for file in step_cad_file_list:
+#         logger.info(
+#             f"Converting {file['f.file_name']} ({i}/{len(step_cad_file_list)})..."
+#         )
 
-        # Arguments:
-        file_name = file["f.file_name"] + ".stl"
-        file_path = LEARNING_FACTORY_BINARIES_IMPORT_FOLDER + file_name
-        id_short = file["f.id_short"] + "_stl_conversion"
-        iri = file["f.iri"] + "_stl_conversion"
-        description = (
-            (
-                file["f.description"]
-                + f" (Converted automatically to STL for visualization on {datetime.now().isoformat()}. This conversion is not loss-free!)"
-            ),
-        )
+#         # Arguments:
+#         file_name = file["f.file_name"] + ".stl"
+#         file_path = LEARNING_FACTORY_BINARIES_IMPORT_FOLDER + file_name
+#         id_short = file["f.id_short"] + "_stl_conversion"
+#         iri = file["f.iri"] + "_stl_conversion"
+#         description = (
+#             (
+#                 file["f.description"]
+#                 + f" (Converted automatically to STL for visualization on {datetime.now().isoformat()}. This conversion is not loss-free!)"
+#             ),
+#         )
 
-        # Convert file
-        step_import = cqkit.importers.importStep(
-            LEARNING_FACTORY_BINARIES_IMPORT_FOLDER + file["f.file_name"]
-        )
+#         # Convert file
+#         step_import = cqkit.importers.importStep(
+#             LEARNING_FACTORY_BINARIES_IMPORT_FOLDER + file["f.file_name"]
+#         )
 
-        cqkit.export_stl_file(step_import, file_path, tolerance=1000000000)
+#         cqkit.export_stl_file(step_import, file_path, tolerance=1000000000)
 
-        # Upload file
+#         # Upload file
 
-        bucket.upload_file(file_path, iri)
+#         bucket.upload_file(file_path, iri)
 
-        # Delete the generated file locally
-        os.remove(file_path)
+#         # Delete the generated file locally
+#         os.remove(file_path)
 
-        # Create node and relationship for KG-DT
-        node = py2neo.Node(
-            "SUPPLEMENTARY_FILE",
-            iri=iri,
-            id_short=id_short,
-            description=description,
-            type="CAD_STL",
-            file_name=file_name,
-        )
+#         # Create node and relationship for KG-DT
+#         node = py2neo.Node(
+#             "SUPPLEMENTARY_FILE",
+#             iri=iri,
+#             id_short=id_short,
+#             description=description,
+#             type="CAD_STL",
+#             file_name=file_name,
+#         )
 
-        g.create(node)
+#         g.create(node)
 
-        relationship = py2neo.Relationship(
-            py2neo.NodeMatcher(g)
-            .match("SUPPLEMENTARY_FILE", iri=file["f.iri"])
-            .first(),
-            "SECONDARY_FORMAT",
-            node,
-        )
+#         relationship = py2neo.Relationship(
+#             py2neo.NodeMatcher(g)
+#             .match("SUPPLEMENTARY_FILE", iri=file["f.iri"])
+#             .first(),
+#             "SECONDARY_FORMAT",
+#             node,
+#         )
 
-        g.create(relationship)
+#         g.create(relationship)
 
-        # Relationship to database node
+#         # Relationship to database node
 
-        db_relationship = py2neo.Relationship(
-            node,
-            "FILE_DB_ACCESS",
-            py2neo.NodeMatcher(g)
-            .match("DATABASE_CONNECTION")
-            .where(
-                '(_)<-[:FILE_DB_ACCESS]-(: SUPPLEMENTARY_FILE {iri: "'
-                + file["f.iri"]
-                + '"})'
-            )
-            .first(),
-        )
+#         db_relationship = py2neo.Relationship(
+#             node,
+#             "FILE_DB_ACCESS",
+#             py2neo.NodeMatcher(g)
+#             .match("DATABASE_CONNECTION")
+#             .where(
+#                 '(_)<-[:FILE_DB_ACCESS]-(: SUPPLEMENTARY_FILE {iri: "'
+#                 + file["f.iri"]
+#                 + '"})'
+#             )
+#             .first(),
+#         )
 
-        g.create(db_relationship)
+#         g.create(db_relationship)
 
-        i += 1
+#         i += 1
 
-    g.commit(tx)
+#     g.commit(tx)
 
 
 if __name__ == "__main__":
@@ -247,4 +247,4 @@ if __name__ == "__main__":
 
     setup_knowledge_graph()
     import_binary_data()
-    generate_alternative_cad_format()
+    # generate_alternative_cad_format()

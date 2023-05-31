@@ -22,8 +22,8 @@ apt-get install -y python-dev libxml2-dev libxslt1-dev antiword unrtf poppler-ut
 
 # gcc required for tsfresh (timeseries feature extractor)
 # tsfresh installation only works with the dependency (unlike the ones for other packages)
-apt-get install -y gcc
-pip install tsfresh
+# apt-get install -y gcc
+# pip install tsfresh
 
 # Influx cli for remote backup / restore
 wget https://dl.influxdata.com/influxdb/releases/influxdb2-client-2.4.0-amd64.deb
@@ -36,27 +36,27 @@ apt-get install -y memcached
 apt-get clean
 
 # Requirements for the pke keyphrase extraction library
-python -m spacy download en_core_web_sm
+# python -m spacy download en_core_web_sm
 
 # OpenMMLab (must be after the pip requirements for mim)
 # RUN mim install mmcv-full
 
-pip install torch==1.12.1+cpu torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu
-pip install mmcv-full -f https://download.openmmlab.com/mmcv/dist/cpu/torch1.12.0/index.html
+# pip install torch==1.12.1+cpu torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu
+# pip install mmcv-full -f https://download.openmmlab.com/mmcv/dist/cpu/torch1.12.0/index.html
 
 # RUN pip install mmdet
-cd dependencies
+# cd dependencies
 
-git clone --depth=1 https://github.com/open-mmlab/mmdetection.git --branch v2.26.0
+# git clone --depth=1 https://github.com/open-mmlab/mmdetection.git --branch v2.26.0
 
-cd mmdetection
-pip install -v -e .
+# cd mmdetection
+# pip install -v -e .
 
 # Install the model:
-mkdir checkpoints
-cd checkpoints
-mkdir faster_rcnn
-cd faster_rcnn
-wget https://download.openmmlab.com/mmdetection/v2.0/faster_rcnn/faster_rcnn_r50_fpn_1x_coco/faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth
+# mkdir checkpoints
+# cd checkpoints
+# mkdir faster_rcnn
+# cd faster_rcnn
+# wget https://download.openmmlab.com/mmdetection/v2.0/faster_rcnn/faster_rcnn_r50_fpn_1x_coco/faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth
 
-cd ../../..
+cd ../..
